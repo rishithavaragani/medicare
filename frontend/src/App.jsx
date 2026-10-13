@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import MyAppointments from './pages/MyAppointments';
 import ApplyAsDoctor from './pages/ApplyAsDoctor';
 import healthcareHeroImg from './assets/healthcare_hero.jpg';
+import modernHealthcareHeroImg from './assets/modern_healthcare_hero.jpg';
 import logoMark from './assets/medicare-logo.svg';
 import './App.css';
 
@@ -339,7 +340,7 @@ function App() {
               {/* Hero Visual Image Card */}
               <div className="hero-visual-image-wrapper">
                 <img
-                  src={healthcareHeroImg}
+                  src={modernHealthcareHeroImg}
                   alt="MediCare Digital Health Consultation"
                   className="hero-doctor-image"
                 />

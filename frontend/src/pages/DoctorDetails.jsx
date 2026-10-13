@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getDoctorDetail, getDoctorSlots, bookAppointment, getStoredUser } from '../api/api';
 import { ConfirmationModal } from '../components';
 import { downloadAppointmentPdf } from '../utils/appointmentPdf';
+import appointmentSuccessImg from '../assets/appointment_success.jpg';
 import './DoctorDetails.css';
 
 function formatFee(fee) {
@@ -233,25 +234,43 @@ function DoctorDetails({ doctorId, onNavigate }) {
         </p>
 
         {bookingSuccess && (
-          <div className="alert-banner success" role="alert">
-            <p><strong>Appointment Confirmed!</strong> Your visit with {doctor.fullName} has been scheduled.</p>
-            <div style={{ marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="save-button"
-                style={{ padding: '8px 16px', fontSize: '13px' }}
-                onClick={() => downloadAppointmentPdf(bookingSuccess)}
-              >
-                ⬇ Download PDF Confirmation
-              </button>
-              <button
-                type="button"
-                className="save-button"
-                style={{ padding: '8px 16px', fontSize: '13px' }}
-                onClick={() => onNavigate('appointments')}
-              >
-                View in My Appointments →
-              </button>
+          <div className="booking-success-card" role="status">
+            <div className="success-image-wrapper">
+              <img
+                src={appointmentSuccessImg}
+                alt="Appointment Successfully Confirmed"
+                className="success-illustration"
+              />
+            </div>
+            <div className="success-content">
+              <span className="success-tag">✓ APPOINTMENT CONFIRMED</span>
+              <h4>Your consultation with {doctor.fullName} is scheduled!</h4>
+              <p className="success-desc">
+                Your appointment ID is <strong>#{bookingSuccess.id}</strong>. A digital appointment pass has been issued and linked to your patient profile.
+              </p>
+              <div className="success-actions">
+                <button
+                  type="button"
+                  className="btn-success-action btn-pdf"
+                  onClick={() => downloadAppointmentPdf(bookingSuccess)}
+                >
+                  ⬇ Download PDF Pass
+                </button>
+                <button
+                  type="button"
+                  className="btn-success-action btn-portal"
+                  onClick={() => onNavigate('appointments')}
+                >
+                  View in My Appointments →
+                </button>
+                <button
+                  type="button"
+                  className="btn-success-action btn-another"
+                  onClick={() => setBookingSuccess(null)}
+                >
+                  Book Another Slot
+                </button>
+              </div>
             </div>
           </div>
         )}

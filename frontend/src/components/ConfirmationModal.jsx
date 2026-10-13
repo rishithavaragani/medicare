@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './ConfirmationModal.css';
 
 export function ConfirmationModal({
@@ -7,23 +7,76 @@ export function ConfirmationModal({
   message,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  confirmVariant = 'primary', // 'primary' | 'danger'
+  confirmVariant = 'primary', // 'primary' | 'teal' | 'success' | 'warning' | 'danger'
   isLoading = false,
   onConfirm,
   onCancel,
   details = [],
+  image = null,
+  showCancel = true,
 }) {
+  // Close on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && !isLoading) {
+        onCancel?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isLoading, onCancel]);
+
   if (!isOpen) return null;
 
-  return (
-    <div className="mc-modal-overlay" onClick={onCancel} role="dialog" aria-modal="true">
-      <div className="mc-modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className={`mc-modal-icon-badge mc-modal-icon-badge--${confirmVariant}`}>
-          {confirmVariant === 'danger' ? '⚠️' : '📅'}
-        </div>
+  const renderIcon = () => {
+    switch (confirmVariant) {
+      case 'danger':
+        return '🗑️';
+      case 'warning':
+        return '⚠️';
+      case 'success':
+      case 'teal':
+        return '✓';
+      case 'primary':
+      default:
+        return '📅';
+    }
+  };
 
-        <h3 className="mc-modal-title">{title}</h3>
-        <p className="mc-modal-message">{message}</p>
+  return (
+    <div
+      className="mc-modal-overlay"
+      onClick={!isLoading ? onCancel : undefined}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mc-modal-title"
+    >
+      <div className="mc-modal-card" onClick={(e) => e.stopPropagation()}>
+        {/* Top Close Button */}
+        <button
+          type="button"
+          className="mc-modal-close-btn"
+          onClick={onCancel}
+          disabled={isLoading}
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+
+        {/* Optional Header Image or Icon Badge */}
+        {image ? (
+          <div className="mc-modal-image-wrapper">
+            <img src={image} alt="" className="mc-modal-header-img" />
+          </div>
+        ) : (
+          <div className={`mc-modal-icon-badge mc-modal-icon-badge--${confirmVariant}`} aria-hidden="true">
+            {renderIcon()}
+          </div>
+        )}
+
+        <h3 id="mc-modal-title" className="mc-modal-title">{title}</h3>
+        {message && <p className="mc-modal-message">{message}</p>}
 
         {details && details.length > 0 && (
           <div className="mc-modal-details-box">
@@ -37,22 +90,26 @@ export function ConfirmationModal({
         )}
 
         <div className="mc-modal-actions">
-          <button
-            type="button"
-            className="mc-modal-btn mc-modal-btn--secondary"
-            onClick={onCancel}
-            disabled={isLoading}
-          >
-            {cancelText}
-          </button>
-          <button
-            type="button"
-            className={`mc-modal-btn mc-modal-btn--${confirmVariant}`}
-            onClick={onConfirm}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Processing...' : confirmText}
-          </button>
+          {showCancel && (
+            <button
+              type="button"
+              className="mc-modal-btn mc-modal-btn--secondary"
+              onClick={onCancel}
+              disabled={isLoading}
+            >
+              {cancelText}
+            </button>
+          )}
+          {onConfirm && (
+            <button
+              type="button"
+              className={`mc-modal-btn mc-modal-btn--${confirmVariant}`}
+              onClick={onConfirm}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : confirmText}
+            </button>
+          )}
         </div>
       </div>
     </div>
